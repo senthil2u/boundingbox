@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Bounding Box with Caption</title>
+    <style>
+        #videoElement {
+            width: 100%;
+            height: auto;
+        }
+        #caption {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+<video id="videoElement" autoplay></video>
+<div id="caption"></div>
+
+<script>
+    // Get the video element
+    const video = document.getElementById('videoElement');
+    const caption = document.getElementById('caption');
+
+    // Check browser support for getUserMedia
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Access the back camera
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+            .then(function (stream) {
+                // Assign the stream to the video element
+                video.srcObject = stream;
+                video.play();
+
+                // Enable full screen mode
+                video.addEventListener('click', function () {
+                    enterFullScreen();
+                });
+                document.addEventListener('fullscreenchange', handleOrientationChange); // Standard event
+                document.addEventListener('webkitfullscreenchange', handleOrientationChange); // WebKit-based browsers
+                document.addEventListener('mozfullscreenchange', handleOrientationChange); // Mozilla Firefox
+                document.addEventListener('MSFullscreenChange', handleOrientationChange); // IE/Edge
+
+                // Initial check for full screen on page load
+                if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+                    handleOrientationChange();
+                }
+            })
+            .catch(function (error) {
+                console.log("Error accessing the camera: ", error);
+            });
+    } else {
+        console.log("getUserMedia is not supported by this browser.");
+    }
+
+    // Example bounding box code (replace with your own implementation)
+    function drawBoundingBox(x, y, width, height, captionText) {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.left = x + 'px';
+        canvas.style.top = y + 'px';
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        canvas.style.border = '2px solid red';
+        document.body.appendChild(canvas);
+
+        // Add caption
+        caption.textContent = captionText;
+    }
+
+    // Example usage
+    drawBoundingBox(100, 100, 200, 200, "Object 1");
+
+    // Function to enter full screen mode
+    function enterFullScreen() {
+        const videoElement = document.documentElement;
+
+        if (videoElement.requestFullscreen) {
+            videoElement.requestFullscreen();
+        } else if (videoElement.mozRequestFullScreen) {
+            videoElement.mozRequestFullScreen();
+        } else if (videoElement.webkitRequestFullscreen) {
+            videoElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        } else if (videoElement.msRequestFullscreen) {
+            videoElement.msRequestFullscreen();
+        }
+    }
+
+    // Function to exit full screen mode
+    function exitFullScreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+
+    // Function to handle orientation change and update full screen
+    function handleOrientationChange() {
+        if (window.orientation === 90 || window.orientation === -90) {
+            // Landscape orientation
+            enterFullScreen();
+        } else {
+            // Portrait orientation
+            exitFullScreen();
+        }
+    }
+
+    // Event listener to handle resize event
+    window.addEventListener('resize', function () {
+        handleOrientationChange();
+    });
+</script>
+</body>
+</html>

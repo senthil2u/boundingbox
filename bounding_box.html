@@ -54,7 +54,7 @@
     <script>
       // Access the web camera
       navigator.mediaDevices
-        .getUserMedia({ video: true })
+        .getUserMedia({ video: { facingMode: 'environment' } })
         .then(function (stream) {
           var video = document.querySelector("#myVideo");
           video.srcObject = stream;

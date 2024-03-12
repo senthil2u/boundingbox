@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #myVideo {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+
+      #boundingBox {
+        position: absolute;
+        top: 350px;
+        left: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: left;
+      }
+
+      #overlay {
+        position: absolute;
+        top: -55px;
+        left: 125px;
+        width: 200px;
+        height: 50px;
+        border: 3px solid green;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #caption {
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: red;
+        padding: 5px;
+        margin-top: 5px;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <video id="myVideo" autoplay></video>
+    <div id="boundingBox">
+        <div id="overlay"></div>  
+        <div id="caption">Please adjust the camera to fit the mileage reading within the green box.</div>
+        
+    </div>
+
+    <script>
+      // Access the web camera
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then(function (stream) {
+          var video = document.querySelector("#myVideo");
+          video.srcObject = stream;
+          video.onloadedmetadata = function (e) {
+            video.play();
+          };
+        })
+        .catch(function (err) {
+          console.log("Error: " + err);
+        });
+    </script>
+  </body>
+</html>

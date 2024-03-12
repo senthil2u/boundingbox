@@ -25,8 +25,8 @@
     const video = document.getElementById('videoElement');
     const caption = document.getElementById('caption');
 
-    // Check browser support for getUserMedia
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // Check browser support for getUserMedia and Fullscreen API
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && document.documentElement.requestFullscreen) {
         // Access the back camera
         navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
             .then(function (stream) {
@@ -36,7 +36,7 @@
 
                 // Enable full screen mode
                 video.addEventListener('click', function () {
-                    enterFullScreen();
+                    enterFullScreen(video);
                 });
                 document.addEventListener('fullscreenchange', handleOrientationChange); // Standard event
                 document.addEventListener('webkitfullscreenchange', handleOrientationChange); // WebKit-based browsers
@@ -52,7 +52,7 @@
                 console.log("Error accessing the camera: ", error);
             });
     } else {
-        console.log("getUserMedia is not supported by this browser.");
+        console.log("getUserMedia or Fullscreen API is not supported by this browser.");
     }
 
     // Example bounding box code (replace with your own implementation)
@@ -74,17 +74,15 @@
     drawBoundingBox(100, 100, 200, 200, "Object 1");
 
     // Function to enter full screen mode
-    function enterFullScreen() {
-        const videoElement = document.documentElement;
-
-        if (videoElement.requestFullscreen) {
-            videoElement.requestFullscreen();
-        } else if (videoElement.mozRequestFullScreen) {
-            videoElement.mozRequestFullScreen();
-        } else if (videoElement.webkitRequestFullscreen) {
-            videoElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-        } else if (videoElement.msRequestFullscreen) {
-            videoElement.msRequestFullscreen();
+    function enterFullScreen(element) {
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
         }
     }
 
@@ -105,7 +103,7 @@
     function handleOrientationChange() {
         if (window.orientation === 90 || window.orientation === -90) {
             // Landscape orientation
-            enterFullScreen();
+            enterFullScreen(document.documentElement);
         } else {
             // Portrait orientation
             exitFullScreen();
